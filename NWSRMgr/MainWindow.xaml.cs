@@ -4,6 +4,9 @@ using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using M2;
 
 namespace NWSRMgr
 {
@@ -369,5 +372,71 @@ namespace NWSRMgr
                 }
             }
         }
+
+        // 指针转换为结构
+        public static T PtrToStructure<T>(IntPtr Ptr)
+        {
+            return (T)Marshal.PtrToStructure(Ptr, typeof(T));
+        }
+
+        protected virtual IntPtr WindowProcDPIChanged(
+            IntPtr hWnd,
+            int message,
+            IntPtr wParam,
+            IntPtr lParam,
+            ref bool handled)
+        {
+            switch (message)
+            {
+                case DPIWrapper.WM_DPICHANGED:
+                    uint _wParam = Convert.ToUInt32(wParam.ToInt32());
+
+                    DPIWrapper.RECT prcNewWindow = PtrToStructure<DPIWrapper.RECT>(lParam);
+
+                    ScaleTransform Scale = new ScaleTransform(
+                        DPIWrapper.LOWORD(_wParam) / 96.0,
+                        DPIWrapper.HIWORD(_wParam) / 96.0);
+
+                    GetVisualChild(0).SetValue(LayoutTransformProperty, Scale);
+
+                    Left = prcNewWindow.left;
+                    Top = prcNewWindow.top;
+
+                    Width = prcNewWindow.right - prcNewWindow.left;
+                    Height = prcNewWindow.bottom - prcNewWindow.top;
+
+                    break;
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            IntPtr hWnd = new WindowInteropHelper(this).Handle;
+
+            DPIWrapper.EnableChildWindowDpiMessage(hWnd, true);
+
+            uint dpiX = 96; uint dpiY = 96;
+
+            if (DPIWrapper.S_OK == DPIWrapper.GetWindowDpi(
+                hWnd, ref dpiX, ref dpiY))
+            {
+                ScaleTransform Scale = new ScaleTransform(
+                    dpiX / 96.0, dpiY / 96.0);
+
+                GetVisualChild(0).SetValue(LayoutTransformProperty, Scale);
+
+                Width *= Scale.ScaleX;
+                Height *= Scale.ScaleY;
+
+                HwndSource hwndSource = (HwndSource)PresentationSource.FromVisual(this);
+                if (null != hwndSource)
+                {
+                    hwndSource.AddHook(new HwndSourceHook(WindowProcDPIChanged));
+                }
+            }         
+        }
+
     }
 }

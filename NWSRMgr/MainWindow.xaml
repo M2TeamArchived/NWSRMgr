@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NWSRMgr"
         mc:Ignorable="d"
-        Title="NWSRMgr" FontSize="16" Icon="NWSRMgr.ico" Initialized="Window_Initialized">
+        Title="NWSRMgr" FontSize="16" Icon="NWSRMgr.ico" Initialized="Window_Initialized" Loaded="Window_Loaded" Width="800" Height="450">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
