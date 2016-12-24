@@ -22,6 +22,8 @@ namespace NWSRMgr
 
         public MainWindow()
         {
+            new WpfPerMonitorDPIAwareSupport(this);
+
             InitializeComponent();
         }
         
@@ -126,7 +128,7 @@ namespace NWSRMgr
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "NWSRMgr 2.0.1607.0\n© 2016 M2-Team. All rights reserved.",
+                "NWSRMgr 2.1.1612.0\n© 2016 M2-Team. All rights reserved.",
                 "关于 NWSRMgr",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -305,12 +307,7 @@ namespace NWSRMgr
                     if (result == MessageBoxResult.Yes)
                     {
                         CreateSymbolicLink(LinkName, SelectedItem.DeviceObject, 1);
-                        Process GoFolder = new Process();
-                        GoFolder.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        GoFolder.StartInfo.Arguments = "/c start " + LinkName;
-                        GoFolder.StartInfo.CreateNoWindow = true;
-                        GoFolder.StartInfo.FileName = "cmd.exe";
-                        GoFolder.Start();
+                        Process.Start(LinkName);
                     }
                 }
                 else
@@ -367,76 +364,10 @@ namespace NWSRMgr
                     }
                     else
                     {
-                        MessageBox.Show("系统还原失败", "Mouri_Naruto Windows系统还原管理器");
+                        MessageBox.Show("系统还原失败", "NWSRMgr");
                     }
                 }
             }
         }
-
-        // 指针转换为结构
-        public static T PtrToStructure<T>(IntPtr Ptr)
-        {
-            return (T)Marshal.PtrToStructure(Ptr, typeof(T));
-        }
-
-        protected virtual IntPtr WindowProcDPIChanged(
-            IntPtr hWnd,
-            int message,
-            IntPtr wParam,
-            IntPtr lParam,
-            ref bool handled)
-        {
-            switch (message)
-            {
-                case DPIWrapper.WM_DPICHANGED:
-                    uint _wParam = Convert.ToUInt32(wParam.ToInt32());
-
-                    DPIWrapper.RECT prcNewWindow = PtrToStructure<DPIWrapper.RECT>(lParam);
-
-                    ScaleTransform Scale = new ScaleTransform(
-                        DPIWrapper.LOWORD(_wParam) / 96.0,
-                        DPIWrapper.HIWORD(_wParam) / 96.0);
-
-                    GetVisualChild(0).SetValue(LayoutTransformProperty, Scale);
-
-                    Left = prcNewWindow.left;
-                    Top = prcNewWindow.top;
-
-                    Width = prcNewWindow.right - prcNewWindow.left;
-                    Height = prcNewWindow.bottom - prcNewWindow.top;
-
-                    break;
-            }
-
-            return IntPtr.Zero;
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            IntPtr hWnd = new WindowInteropHelper(this).Handle;
-
-            DPIWrapper.EnableChildWindowDpiMessage(hWnd, true);
-
-            uint dpiX = 96; uint dpiY = 96;
-
-            if (DPIWrapper.S_OK == DPIWrapper.GetWindowDpi(
-                hWnd, ref dpiX, ref dpiY))
-            {
-                ScaleTransform Scale = new ScaleTransform(
-                    dpiX / 96.0, dpiY / 96.0);
-
-                GetVisualChild(0).SetValue(LayoutTransformProperty, Scale);
-
-                Width *= Scale.ScaleX;
-                Height *= Scale.ScaleY;
-
-                HwndSource hwndSource = (HwndSource)PresentationSource.FromVisual(this);
-                if (null != hwndSource)
-                {
-                    hwndSource.AddHook(new HwndSourceHook(WindowProcDPIChanged));
-                }
-            }         
-        }
-
     }
 }
