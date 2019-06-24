@@ -228,14 +228,21 @@ class ExitWindows
     private const int EWX_POWEROFF = 0x00000008;
     private const int EWX_FORCEIFHUNG = 0x00000010;
 
-    public static void DoExitWin(int flg)
+    private static void ExitWindowsInternal(
+        int Flag, 
+        bool IsForce)
     {
-
         //give current process SeShutdownPrivilege
-        RtlAdjustPrivilege(SE_SHUTDOWN_PRIVILEGE, 1, 0, 0);
+        RtlAdjustPrivilege(
+            SE_SHUTDOWN_PRIVILEGE,
+            1, 
+            0,
+            0);
+
+        Flag |= IsForce ? EWX_FORCE : EWX_FORCEIFHUNG;
 
         //Exit windows
-        if (!ExitWindowsEx(flg, 0))
+        if (!ExitWindowsEx(Flag, 0))
         {
             throw new Exception("Exit Windows fail");
         }
@@ -244,48 +251,27 @@ class ExitWindows
     /// <summary>
     /// Reboot computer
     /// </summary>
-    /// <param name="force">force reboot</param>
-    public static void Reboot(bool force = false)
+    /// <param name="IsForce">force reboot</param>
+    public static void Reboot(bool IsForce = false)
     {
-        if (force)
-        {
-            DoExitWin(EWX_REBOOT | EWX_FORCE);
-        }
-        else
-        {
-            DoExitWin(EWX_REBOOT | EWX_FORCEIFHUNG);
-        }
+        ExitWindowsInternal(EWX_REBOOT, IsForce);
     }
 
     /// <summary>
     /// Shut down computer
     /// </summary>
-    /// <param name="force">force shut down</param>
-    public static void Shutdown(bool force = false)
+    /// <param name="IsForce">force shut down</param>
+    public static void Shutdown(bool IsForce = false)
     {
-        if (force)
-        {
-            DoExitWin(EWX_SHUTDOWN | EWX_FORCE);
-        }
-        else
-        {
-            DoExitWin(EWX_SHUTDOWN | EWX_FORCEIFHUNG);
-        }
+        ExitWindowsInternal(EWX_SHUTDOWN, IsForce);
     }
 
     /// <summary>
     /// Log off
     /// </summary>
-    /// <param name="force">force logoff</param>
-    public static void Logoff(bool force = false)
+    /// <param name="IsForce">force logoff</param>
+    public static void Logoff(bool IsForce = false)
     {
-        if (force)
-        {
-            DoExitWin(EWX_LOGOFF | EWX_FORCE);
-        }
-        else
-        {
-            DoExitWin(EWX_LOGOFF | EWX_FORCEIFHUNG);
-        }
+        ExitWindowsInternal(EWX_LOGOFF, IsForce);
     }
 }
