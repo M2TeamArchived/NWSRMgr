@@ -16,13 +16,13 @@ namespace NWSRMgr
 
     public class SystemRestore
     {
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         struct RESTOREPOINTINFO
         {
             public int dwEventType;
             public int dwRestorePtType;
             public long llSequenceNumber;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 257)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string szDescription;
         }
 
@@ -33,17 +33,22 @@ namespace NWSRMgr
             public long llSequenceNumber;
         }
 
-        [DllImport("SrClient.dll")]
-        static extern bool SRSetRestorePoint(ref RESTOREPOINTINFO SRPInfo, ref STATEMGRSTATUS SRPStatus);
+        [DllImport("SrClient.dll", EntryPoint = "SRSetRestorePointW", CharSet = CharSet.Unicode)]
+        static extern bool SRSetRestorePoint(
+            ref RESTOREPOINTINFO SRPInfo, 
+            ref STATEMGRSTATUS SRPStatus);
 
         [DllImport("SrClient.dll")]
-        static extern int SRRemoveRestorePoint(int dwRPNum);
+        static extern int SRRemoveRestorePoint(
+            int dwRPNum);
 
         [DllImport("SrClient.dll")]
-        static extern int DisableSR([MarshalAs(UnmanagedType.LPWStr)]string Drive);
+        static extern int DisableSR(
+            [MarshalAs(UnmanagedType.LPWStr)] string Drive);
 
         [DllImport("SrClient.dll")]
-        static extern int EnableSR([MarshalAs(UnmanagedType.LPWStr)]string Drive);
+        static extern int EnableSR(
+            [MarshalAs(UnmanagedType.LPWStr)] string Drive);
 
         public ManagementObjectSearcher SRObject = new ManagementObjectSearcher("root/default", "SELECT * FROM SystemRestore");
         public ManagementObjectSearcher VSSObject = new ManagementObjectSearcher("root/CIMV2", "SELECT * FROM Win32_ShadowStorage");
