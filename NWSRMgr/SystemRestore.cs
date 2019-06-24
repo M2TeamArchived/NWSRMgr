@@ -219,30 +219,38 @@ namespace NWSRMgr
 class ExitWindows
 {
     [DllImport("ntdll.dll")]
-    private static extern void RtlAdjustPrivilege(int Privilege, int Enable, int Thread, int OldValue);
+    private static extern void RtlAdjustPrivilege(
+        [MarshalAs(UnmanagedType.SysUInt)] uint Privilege,
+        [MarshalAs(UnmanagedType.Bool)] bool Enable, 
+        [MarshalAs(UnmanagedType.Bool)] bool Client, 
+        [MarshalAs(UnmanagedType.Bool)] out bool WasEnabled);
 
-    [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-    private static extern bool ExitWindowsEx(int flg, int rea);
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool ExitWindowsEx(
+        [MarshalAs(UnmanagedType.SysUInt)] uint uFlags,
+        [MarshalAs(UnmanagedType.U4)] uint dwReason);
 
     public const int SE_SHUTDOWN_PRIVILEGE = 19;
 
-    private const int EWX_LOGOFF = 0x00000000;
-    private const int EWX_SHUTDOWN = 0x00000001;
-    private const int EWX_REBOOT = 0x00000002;
-    private const int EWX_FORCE = 0x00000004;
-    private const int EWX_POWEROFF = 0x00000008;
-    private const int EWX_FORCEIFHUNG = 0x00000010;
+    private const uint EWX_LOGOFF = 0x00000000;
+    private const uint EWX_SHUTDOWN = 0x00000001;
+    private const uint EWX_REBOOT = 0x00000002;
+    private const uint EWX_FORCE = 0x00000004;
+    private const uint EWX_POWEROFF = 0x00000008;
+    private const uint EWX_FORCEIFHUNG = 0x00000010;
 
     private static void ExitWindowsInternal(
-        int Flag, 
+        uint Flag, 
         bool IsForce)
     {
+        bool WasEnabled = false;
+
         //give current process SeShutdownPrivilege
         RtlAdjustPrivilege(
             SE_SHUTDOWN_PRIVILEGE,
-            1, 
-            0,
-            0);
+            true, 
+            false,
+            out WasEnabled);
 
         Flag |= IsForce ? EWX_FORCE : EWX_FORCEIFHUNG;
 
