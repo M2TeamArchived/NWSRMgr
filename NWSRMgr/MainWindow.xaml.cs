@@ -128,7 +128,7 @@ namespace NWSRMgr
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "NWSRMgr 2.1.1612.0\n© 2016 M2-Team. All rights reserved.",
+                "NWSRMgr 3.0.0\n© M2-Team and Contributors. All rights reserved.",
                 "关于 NWSRMgr",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);

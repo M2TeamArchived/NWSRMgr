@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29318.209
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NWSRMgr", "NWSRMgr\NWSRMgr.csproj", "{565EEAF4-92B3-41C0-8869-C2E200766BF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWSRMgr", "NWSRMgr\NWSRMgr.csproj", "{BA575C05-FDAF-465B-9757-A4E8588105F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{565EEAF4-92B3-41C0-8869-C2E200766BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{565EEAF4-92B3-41C0-8869-C2E200766BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{565EEAF4-92B3-41C0-8869-C2E200766BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{565EEAF4-92B3-41C0-8869-C2E200766BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA575C05-FDAF-465B-9757-A4E8588105F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA575C05-FDAF-465B-9757-A4E8588105F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA575C05-FDAF-465B-9757-A4E8588105F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA575C05-FDAF-465B-9757-A4E8588105F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA575FAB-47DF-4306-ABCC-20ED135CA6FA}
 	EndGlobalSection
 EndGlobal
